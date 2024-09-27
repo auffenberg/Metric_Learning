@@ -11,13 +11,8 @@ def classification(working_dir, n_classes, n_runs):
     K = 3
     datasets = [[my_datasets.load_caltech_data(working_dir, n_classes), 'caltech256' + str(i)] for i in range(n_runs)]
     results = {}
-    iter_count = 0
     for (partitioned_data, partitioned_labels), dataset_name in datasets:
-        iter_count += 1
-        print(f'Dataset counter: {iter_count}')
-        start_time = time.time()
         results[dataset_name] = my_testing.run_methods_on_dataset(partitioned_data=partitioned_data, partitioned_labels=partitioned_labels, RBF_A=RBF_A, RBF_B=RBF_B)
-        print(f'Time: {time.time() - start_time}')
     
     return results
 
