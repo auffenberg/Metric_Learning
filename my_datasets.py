@@ -5,7 +5,7 @@ import os
 
 from sklearn.preprocessing import MinMaxScaler
 from pathlib import Path
-from keras.datasets import mnist
+#from keras.datasets import mnist
 
 # Import the MNIST dataset and optionally reduce image dimensions by PCA. 
 def MNIST_data(sample_size, filter_list):
