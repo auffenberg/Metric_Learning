@@ -6,7 +6,6 @@ import pickle
 import concurrent.futures
 
 
-# Helper function to process one iteration
 def process_run(i, working_dir, n_classes, RBF_A, RBF_B):
     partitioned_data, partitioned_labels = my_datasets.load_caltech_data(working_dir, n_classes)
     dataset_name = 'caltech256_' + str(i)
@@ -23,12 +22,9 @@ def parallel_classification(working_dir, n_classes, n_runs, max_workers):
     RBF_B = 0.1
     results = {}
 
-    # Use ProcessPoolExecutor for parallel processing
     with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
-        # Submit tasks for each run in parallel, passing required arguments to the worker
         futures = [executor.submit(process_run, i, working_dir, n_classes, RBF_A, RBF_B) for i in range(n_runs)]
         
-        # Collect results as they are completed
         for future in concurrent.futures.as_completed(futures):
             dataset_name, result = future.result()
             results[dataset_name] = result
