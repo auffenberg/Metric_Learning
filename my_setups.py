@@ -80,8 +80,8 @@ class unsupervised_wasserstein_method():
                                                 device       = 'cpu',
                                                 n_iter       = 100,
                                                 tau          = 1e-1,
-                                                writer       = writer,
-                                                progress_bar = True) 
+                                                writer       = None,
+                                                progress_bar = False) 
 
         end_time = time.time()
         wasserstein_time = end_time - start_time
