@@ -101,11 +101,11 @@ def run_methods_on_dataset(partitioned_data, partitioned_labels, RBF_A, RBF_B):
     train_data, test_data = partitioned_data
     train_labels, test_labels = partitioned_labels
 
-    results['Kernel'] = run_tests(test_dataset=test_data, test_labels=test_labels, method=my_setups.kernel_method, EMD=False, method_arguments={'data': train_data, 'RBF_A': RBF_A, 'RBF_B': RBF_B})
-    results['Linear'] = run_tests(test_dataset=test_data, test_labels=test_labels, method=my_setups.linear_method, EMD=False, method_arguments={'data': train_data})
-    results['LMNN'] = run_tests(test_dataset=test_data, test_labels=test_labels, method=my_setups.LMNN_method, EMD=False, method_arguments={'data': train_data, 'labels': train_labels})
-    results['ITML'] = run_tests(test_dataset=test_data, test_labels=test_labels, method=my_setups.ITML_method, EMD=False, method_arguments={'data': train_data, 'labels': train_labels})
-    results['L2'] = run_tests(test_dataset=test_data, test_labels=test_labels, method=my_setups.euclidean_method, EMD=False, method_arguments={'data': train_data, 'labels': train_labels})
+    #results['Kernel'] = run_tests(test_dataset=test_data, test_labels=test_labels, method=my_setups.kernel_method, EMD=False, method_arguments={'data': train_data, 'RBF_A': RBF_A, 'RBF_B': RBF_B})
+    #results['Linear'] = run_tests(test_dataset=test_data, test_labels=test_labels, method=my_setups.linear_method, EMD=False, method_arguments={'data': train_data})
+    #results['LMNN'] = run_tests(test_dataset=test_data, test_labels=test_labels, method=my_setups.LMNN_method, EMD=False, method_arguments={'data': train_data, 'labels': train_labels})
+    #results['ITML'] = run_tests(test_dataset=test_data, test_labels=test_labels, method=my_setups.ITML_method, EMD=False, method_arguments={'data': train_data, 'labels': train_labels})
+    #results['L2'] = run_tests(test_dataset=test_data, test_labels=test_labels, method=my_setups.euclidean_method, EMD=False, method_arguments={'data': train_data, 'labels': train_labels})
     
     results['u_GML'] = run_tests(test_dataset=test_data, test_labels=test_labels, EMD=True, method=my_setups.unsupervised_wasserstein_method, method_arguments={'data': train_data})
     results['s_GML'] = run_tests(test_dataset=test_data, test_labels=test_labels, EMD=True, method=my_setups.supervised_wasserstein_method, method_arguments={'data': train_data, 'labels': train_labels})

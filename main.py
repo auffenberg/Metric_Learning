@@ -44,6 +44,10 @@ def classification(working_dir, n_classes, n_runs):
         print(f'Iteration count: {i + 1}')
         results[dataset_name] = my_testing.run_methods_on_dataset(partitioned_data=partitioned_data, partitioned_labels=partitioned_labels, RBF_A=RBF_A, RBF_B=RBF_B)
         print(f'Time: {time.time() - start_time}s')
+
+        # Save the partial results to the .pkl file after each iteration
+        with open('binary_classification_results', 'wb') as file:
+            pickle.dump(results, file)
     
     return results
 
@@ -51,7 +55,7 @@ if __name__ == '__main__':
     parallel = False
     max_workers = 4
     working_dir = Path(__file__).parent / 'datasets/Caltech256/caltech256/256_ObjectCategories'
-    n_runs = 100
+    n_runs = 1
 
     binary_results = parallel_classification(working_dir=working_dir, n_classes=2, n_runs=n_runs, max_workers=max_workers) if parallel else classification(working_dir=working_dir, n_classes=2, n_runs=n_runs)
     with open(f'{Path(__file__).parent}/binary_classification_results.pkl', 'wb') as file:
@@ -59,6 +63,5 @@ if __name__ == '__main__':
 
 
     multiclass_results = parallel_classification(working_dir=working_dir, n_classes=4, n_runs=n_runs, max_workers=max_workers) if parallel else classification(working_dir=working_dir, n_classes=4, n_runs=n_runs)
-    
     with open(f'{Path(__file__).parent}/multiclass_classification_results.pkl', 'wb') as file:
         pickle.dump(multiclass_results, file)
