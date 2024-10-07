@@ -65,8 +65,6 @@ def run_tests(test_dataset, test_labels, method, EMD, method_arguments):
     # use test data
     scores = []
 
-    k_NN_mean_acc_across_data = []
-    k_NN_std_acc_across_data = []
     error_rates_across_data = []
 
     if EMD:
@@ -96,16 +94,50 @@ def run_tests(test_dataset, test_labels, method, EMD, method_arguments):
 
     return dic
 
+    
+def run_l1_tests(data, test_labels):
+    # use test data
+    scores = []
+    error_rates_across_data = []
+
+    distances = np.zeros((data.shape[0], data.shape[0]))
+    for i in range(len(data)):
+        for j in range(i, len(data)):
+            distances[i, j] = distances[j, i] = np.linalg.norm(data[i] - data[j], ord=1)
+
+    scores.append(silhouette_score(distances, test_labels, metric='precomputed'))
+
+    error_rates = [knn_test_error(distances, test_labels, i) for i in range(1, 21)]
+    error_rates_across_data.append(error_rates)
+
+    # run k-NN classification and calculate mean accuracy and standard deviation.
+    k_NN_mean_acc = []
+    k_NN_std_acc = []
+    for k in range(1, 21):
+        mean_acc, std_acc = evaluate_knn(distances, test_labels, K=k)
+        k_NN_mean_acc.append(mean_acc)
+        k_NN_std_acc.append(std_acc)
+
+    dic = {'distances': None, 
+           'time': 0,
+           'ASW_scores': scores,
+           'K-NN mean accuracies': k_NN_mean_acc,
+           'K-NN std accuracies': k_NN_std_acc,
+           'K-NN error rates': error_rates_across_data}
+
+    return dic
+
 def run_methods_on_dataset(partitioned_data, partitioned_labels, RBF_A, RBF_B):
     results = {}
     train_data, test_data = partitioned_data
     train_labels, test_labels = partitioned_labels
 
-    #results['Kernel'] = run_tests(test_dataset=test_data, test_labels=test_labels, method=my_setups.kernel_method, EMD=False, method_arguments={'data': train_data, 'RBF_A': RBF_A, 'RBF_B': RBF_B})
-    #results['Linear'] = run_tests(test_dataset=test_data, test_labels=test_labels, method=my_setups.linear_method, EMD=False, method_arguments={'data': train_data})
-    #results['LMNN'] = run_tests(test_dataset=test_data, test_labels=test_labels, method=my_setups.LMNN_method, EMD=False, method_arguments={'data': train_data, 'labels': train_labels})
-    #results['ITML'] = run_tests(test_dataset=test_data, test_labels=test_labels, method=my_setups.ITML_method, EMD=False, method_arguments={'data': train_data, 'labels': train_labels})
-    #results['L2'] = run_tests(test_dataset=test_data, test_labels=test_labels, method=my_setups.euclidean_method, EMD=False, method_arguments={'data': train_data, 'labels': train_labels})
+    results['Kernel'] = run_tests(test_dataset=test_data, test_labels=test_labels, method=my_setups.kernel_method, EMD=False, method_arguments={'data': train_data, 'RBF_A': RBF_A, 'RBF_B': RBF_B})
+    results['Linear'] = run_tests(test_dataset=test_data, test_labels=test_labels, method=my_setups.linear_method, EMD=False, method_arguments={'data': train_data})
+    results['LMNN'] = run_tests(test_dataset=test_data, test_labels=test_labels, method=my_setups.LMNN_method, EMD=False, method_arguments={'data': train_data, 'labels': train_labels})
+    results['ITML'] = run_tests(test_dataset=test_data, test_labels=test_labels, method=my_setups.ITML_method, EMD=False, method_arguments={'data': train_data, 'labels': train_labels})
+    results['L2'] = run_tests(test_dataset=test_data, test_labels=test_labels, method=my_setups.euclidean_method, EMD=False, method_arguments={'data': train_data, 'labels': train_labels})
+    results['L1'] = run_l1_tests(data=test_data, test_labels=test_labels)
     
     results['u_GML'] = run_tests(test_dataset=test_data, test_labels=test_labels, EMD=True, method=my_setups.unsupervised_wasserstein_method, method_arguments={'data': train_data})
     results['s_GML'] = run_tests(test_dataset=test_data, test_labels=test_labels, EMD=True, method=my_setups.supervised_wasserstein_method, method_arguments={'data': train_data, 'labels': train_labels})
@@ -117,5 +149,6 @@ def run_methods_on_dataset(partitioned_data, partitioned_labels, RBF_A, RBF_B):
     results['LMNN-H'] = run_tests(test_dataset=hellinger_test_data, test_labels=test_labels, EMD=False, method=my_setups.LMNN_method, method_arguments={'data': hellinger_train_data, 'labels': train_labels})
     results['ITML-H'] = run_tests(test_dataset=hellinger_test_data, test_labels=test_labels, EMD=False, method=my_setups.ITML_method, method_arguments={'data': hellinger_train_data, 'labels': train_labels})
     results['L2-H'] = run_tests(test_dataset=hellinger_test_data, test_labels=test_labels, method=my_setups.euclidean_method, EMD=False, method_arguments={'data': hellinger_train_data, 'labels': train_labels})
+    results['L1-H'] = run_l1_tests(data=hellinger_test_data, test_labels=test_labels)
 
     return results
